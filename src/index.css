@@ -1,0 +1,907 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Almarai:wght@300;400;700;800&family=Amiri:wght@400;700&family=Tajawal:wght@400;500;700;800&family=Reem+Kufi:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Cream/Off-White Background - Competition spec */
+    --background: 40 33% 96%;
+    --foreground: 20 25% 12%;
+
+    /* Cards on cream */
+    --card: 40 40% 99%;
+    --card-foreground: 20 25% 12%;
+
+    --popover: 40 40% 99%;
+    --popover-foreground: 20 25% 12%;
+
+    /* Dark Red Primary - Competition spec #8B0000 */
+    --primary: 0 100% 27%;
+    --primary-foreground: 40 40% 98%;
+
+    /* Dark Brown Secondary - Competition spec */
+    --secondary: 20 40% 20%;
+    --secondary-foreground: 40 40% 98%;
+
+    /* Muted cream tones */
+    --muted: 35 25% 91%;
+    --muted-foreground: 20 20% 40%;
+
+    /* Accent - warm gold for highlights */
+    --accent: 38 92% 50%;
+    --accent-foreground: 20 25% 12%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 30 20% 88%;
+    --input: 30 20% 90%;
+    --ring: 0 100% 27%;
+
+    --radius: 0.75rem;
+
+    /* Custom brand tokens */
+    --brand-red: 0 100% 27%;
+    --brand-burgundy: 0 100% 25%;
+    --brand-red-dark: 0 100% 20%;
+    --burnt-orange: 24 85% 45%;
+    --burnt-orange-hover: 24 85% 38%;
+    --warm-beige: 40 33% 96%;
+    --cream: 40 40% 98%;
+    --gold: 38 92% 50%;
+    --gold-cream: 42 85% 75%;
+    --success: 142 76% 36%;
+    --dark-brown: 20 40% 20%;
+  }
+
+  .dark {
+    --background: 20 25% 8%;
+    --foreground: 40 33% 96%;
+    --card: 20 25% 12%;
+    --card-foreground: 40 33% 96%;
+    --popover: 20 25% 12%;
+    --popover-foreground: 40 33% 96%;
+    --primary: 0 100% 35%;
+    --primary-foreground: 40 40% 98%;
+    --secondary: 20 40% 30%;
+    --secondary-foreground: 40 40% 98%;
+    --muted: 20 25% 18%;
+    --muted-foreground: 40 30% 70%;
+    --accent: 38 92% 50%;
+    --accent-foreground: 40 40% 98%;
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 20 25% 22%;
+    --input: 20 25% 22%;
+    --ring: 0 100% 35%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    direction: rtl;
+    scroll-behavior: smooth;
+  }
+
+  html[dir="ltr"] {
+    direction: ltr;
+  }
+
+  body {
+    @apply bg-background text-foreground font-cairo antialiased;
+  }
+}
+
+@layer components {
+  /* Premium Button Variants */
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 
+           transition-all duration-300 shadow-lg hover:shadow-xl 
+           hover:scale-[1.02] active:scale-[0.98];
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/90 
+           transition-all duration-300 shadow-lg hover:shadow-xl;
+  }
+
+  .btn-outline-primary {
+    @apply border-2 border-primary text-primary hover:bg-primary 
+           hover:text-primary-foreground transition-all duration-300;
+  }
+
+  /* Menu Card */
+  .menu-card {
+    @apply bg-card rounded-xl shadow-md hover:shadow-xl 
+           transition-all duration-300 hover:-translate-y-1 
+           border border-border overflow-hidden;
+  }
+
+  /* Category Tab */
+  .category-tab {
+    @apply px-4 py-2 rounded-full text-sm font-medium 
+           transition-all duration-200 whitespace-nowrap;
+  }
+
+  .category-tab-active {
+    @apply bg-primary text-primary-foreground shadow-md;
+  }
+
+  .category-tab-inactive {
+    @apply bg-muted text-muted-foreground hover:bg-muted/80;
+  }
+
+  /* Floating Action Button */
+  .fab {
+    @apply fixed z-50 rounded-full shadow-2xl 
+           transition-all duration-300 hover:scale-110 
+           active:scale-95;
+  }
+
+  /* Game assets: force perfect transparency (no white boxes) */
+  .game-asset {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    object-fit: contain !important;
+    -webkit-backface-visibility: hidden !important;
+    backface-visibility: hidden !important;
+    image-rendering: auto !important;
+  }
+  
+  /* Nuke all white boxes from game items - universal reset */
+  .game-asset,
+  .game-asset *,
+  .game-asset::before,
+  .game-asset::after {
+    background: none !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+  }
+  /* Price Tag */
+  .price-tag {
+    @apply text-primary font-bold text-lg;
+  }
+
+  /* Discount Badge */
+  .discount-badge {
+    @apply bg-accent text-accent-foreground px-3 py-1 
+           rounded-full text-sm font-bold animate-pulse;
+  }
+
+  /* Daily Deal Offer Badge - Theme-aware */
+  .offer-badge {
+    @apply px-2.5 py-1 rounded-full text-[10px] font-bold
+           shadow-lg border-2 border-white/50
+           bg-gradient-to-r from-primary to-accent
+           text-primary-foreground
+           animate-pulse;
+  }
+
+  /* Offer Price Highlight - Theme-aware */
+  .offer-price {
+    @apply text-primary font-extrabold;
+  }
+
+  /* Glass Effect */
+  .glass {
+    @apply bg-white/80 backdrop-blur-md;
+  }
+
+  /* Sticky Header */
+  .sticky-header {
+    @apply sticky top-0 z-40 glass border-b border-border;
+  }
+
+  /* Cart Badge */
+  .cart-badge {
+    @apply absolute -top-2 -right-2 bg-accent text-accent-foreground 
+           w-6 h-6 rounded-full flex items-center justify-center 
+           text-xs font-bold shadow-lg;
+  }
+
+  /* Input Arabic */
+  .input-arabic {
+    @apply bg-background border-2 border-border rounded-xl px-4 py-3 
+           text-foreground placeholder:text-muted-foreground 
+           focus:border-primary focus:ring-2 focus:ring-primary/20 
+           transition-all duration-200;
+  }
+
+  /* Star Rating */
+  .star-rating {
+    @apply text-3xl cursor-pointer transition-all duration-200 
+           hover:scale-125 active:scale-110;
+  }
+
+  /* Map Container */
+  .map-container {
+    @apply relative rounded-2xl overflow-hidden shadow-xl bg-muted;
+  }
+
+  /* Progress Bar */
+  .progress-bar {
+    @apply h-2 bg-muted rounded-full overflow-hidden;
+  }
+
+  .progress-fill {
+    @apply h-full bg-gradient-to-r from-primary to-accent 
+           transition-all duration-500 ease-out;
+  }
+
+  /* Modal Overlay */
+  .modal-overlay {
+    @apply fixed inset-0 bg-black/60 backdrop-blur-sm z-50 
+           flex items-center justify-center p-4;
+  }
+
+  /* Quantity Selector */
+  .qty-btn {
+    @apply w-10 h-10 rounded-full flex items-center justify-center 
+           font-bold text-lg transition-all duration-200 
+           active:scale-90;
+  }
+
+  .qty-btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90;
+  }
+
+  .qty-btn-secondary {
+    @apply bg-muted text-muted-foreground hover:bg-muted/80;
+  }
+}
+
+@layer utilities {
+  /* Animations */
+  @keyframes slideUp {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  @keyframes slideDown {
+    from { transform: translateY(-100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes scaleIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.4); }
+    50% { box-shadow: 0 0 0 15px hsl(var(--primary) / 0); }
+  }
+
+  @keyframes car-move {
+    0% { left: 0%; }
+    100% { left: calc(100% - 40px); }
+  }
+
+  @keyframes draw-line {
+    from { stroke-dashoffset: 1000; }
+    to { stroke-dashoffset: 0; }
+  }
+
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.4s ease-out;
+  }
+
+  .animate-slide-down {
+    animation: slideDown 0.4s ease-out;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.3s ease-out;
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s infinite;
+  }
+
+  .animate-car-move {
+    animation: car-move 12s linear forwards;
+  }
+
+  .animate-draw-line {
+    stroke-dasharray: 1000;
+    animation: draw-line 12s linear forwards;
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s ease-in-out infinite;
+  }
+
+  /* Sadu Pattern Background */
+  .sadu-pattern {
+    background-image: 
+      repeating-linear-gradient(
+        90deg,
+        hsl(var(--secondary) / 0.1) 0px,
+        hsl(var(--secondary) / 0.1) 2px,
+        transparent 2px,
+        transparent 20px
+      ),
+      repeating-linear-gradient(
+        0deg,
+        hsl(var(--gold) / 0.05) 0px,
+        hsl(var(--gold) / 0.05) 1px,
+        transparent 1px,
+        transparent 15px
+      ),
+      repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 30px,
+        hsl(var(--gold) / 0.03) 30px,
+        hsl(var(--gold) / 0.03) 32px
+      );
+  }
+
+  /* Golden Shimmer Overlay */
+  .golden-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .golden-shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 0%, hsl(var(--gold) / 0.3) 50%, transparent 100%);
+    transform: translateX(-100%);
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
+  /* RTL Utilities */
+  .flip-rtl {
+    transform: scaleX(-1);
+  }
+
+  [dir="ltr"] .flip-rtl {
+    transform: scaleX(1);
+  }
+
+  /* Scrollbar */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Premium Shadow */
+  .shadow-premium {
+    box-shadow: 0 10px 40px -10px hsl(var(--primary) / 0.3), 0 4px 15px -5px hsl(var(--primary) / 0.2);
+  }
+
+  .shadow-premium-lg {
+    box-shadow: 0 20px 60px -15px hsl(var(--primary) / 0.4), 0 8px 25px -10px hsl(var(--primary) / 0.25);
+  }
+}
+
+/* Breathing Pulse Animation (Heartbeat style) */
+@keyframes breathing-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  25% {
+    transform: scale(1.05);
+    opacity: 0.95;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  75% {
+    transform: scale(1.03);
+    opacity: 0.97;
+  }
+}
+
+/* Logo Pulse Animation - BOLD & VISIBLE */
+@keyframes logo-pulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  25% {
+    transform: scale(1.08);
+    filter: brightness(1.15);
+  }
+  50% {
+    transform: scale(1.12);
+    filter: brightness(1.2);
+  }
+  75% {
+    transform: scale(1.06);
+    filter: brightness(1.1);
+  }
+}
+
+.animate-logo-pulse {
+  animation: logo-pulse 1.8s ease-in-out infinite;
+}
+
+/* Logo Float Animation - VISIBLE MOVEMENT */
+@keyframes logo-float {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  25% {
+    transform: translateY(-6px) scale(1.05);
+  }
+  50% {
+    transform: translateY(-10px) scale(1.08);
+  }
+  75% {
+    transform: translateY(-4px) scale(1.03);
+  }
+}
+
+.animate-logo-float {
+  animation: logo-float 2s ease-in-out infinite;
+}
+
+/* Golden Pulsing Glow - BRIGHT & INTENSE */
+@keyframes golden-pulse {
+  0%, 100% {
+    opacity: 0.7;
+    transform: scale(1.5);
+    filter: blur(15px);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.8);
+    filter: blur(25px);
+  }
+}
+
+/* Logo Shine Sweep - SHARP & DEFINED */
+@keyframes logo-shine {
+  0% {
+    left: -100%;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+.logo-shine-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.logo-shine-effect::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -100%;
+  width: 60%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 215, 0, 0.1) 20%,
+    rgba(255, 215, 0, 0.5) 40%,
+    rgba(255, 255, 255, 0.8) 50%,
+    rgba(255, 215, 0, 0.5) 60%,
+    rgba(255, 215, 0, 0.1) 80%,
+    transparent 100%
+  );
+  transform: skewX(-25deg);
+  animation: logo-shine 2.5s ease-in-out infinite;
+}
+
+/* Diamond Pulse - ACTIVE */
+@keyframes diamond-pulse {
+  0%, 100% {
+    transform: rotate(45deg) scale(1);
+    opacity: 1;
+    box-shadow: 0 0 15px #FFD700, 0 0 30px #FFD700;
+  }
+  50% {
+    transform: rotate(45deg) scale(1.4);
+    opacity: 0.9;
+    box-shadow: 0 0 25px #FFD700, 0 0 50px #FFD700;
+  }
+}
+
+/* Header Logo Glow */
+@keyframes header-logo-glow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3), 0 0 20px rgba(139, 0, 0, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6), 0 0 40px rgba(139, 0, 0, 0.4);
+  }
+}
+
+.animate-header-glow {
+  animation: header-logo-glow 1.5s ease-in-out infinite;
+}
+
+/* ============================================ */
+/* SEASONAL THEME PATTERNS & DECORATIONS       */
+/* ============================================ */
+
+/* Ramadan Theme - Crescent Moons, Stars & Lanterns */
+.theme-ramadan-pattern {
+  position: relative;
+}
+
+.theme-ramadan-pattern::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: 
+    /* Large crescent moons */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath fill='%23D4AF37' fill-opacity='0.12' d='M40 10C25.09 10 13 22.09 13 37C13 51.91 25.09 64 40 64C43.54 64 47 63.25 50.27 61.98C43.24 58.21 38.5 50.8 38.5 42.25C38.5 33.7 43.24 26.29 50.27 22.52C47 21.25 43.54 20.5 40 20.5C40 20.5 40 10 40 10Z'/%3E%3C/svg%3E"),
+    /* Small stars */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath fill='%23FFD700' fill-opacity='0.15' d='M20 5L22.45 14.27L32 15L24.5 21.18L27 30L20 25L13 30L15.5 21.18L8 15L17.55 14.27L20 5Z'/%3E%3C/svg%3E"),
+    /* Lantern shapes */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='100' viewBox='0 0 60 100'%3E%3Cpath fill='%23D4AF37' fill-opacity='0.08' d='M30 5C28 5 26 7 26 9V12H34V9C34 7 32 5 30 5ZM20 15L15 20V28C15 32 19 36 24 36H36C41 36 45 32 45 28V20L40 15H20ZM18 40V85C18 90 23 95 28 95H32C37 95 42 90 42 85V40H18ZM25 50H35V60H25V50Z'/%3E%3C/svg%3E");
+  background-size: 200px 200px, 80px 80px, 150px 250px;
+  background-position: 10% 20%, 50% 50%, 80% 30%;
+  opacity: 0.8;
+}
+
+.theme-ramadan-pattern::after {
+  content: '🏮';
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  font-size: 2.5rem;
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: 1;
+  animation: lantern-sway 3s ease-in-out infinite;
+}
+
+@keyframes lantern-sway {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+}
+
+/* National Day Theme - Saudi Flag, Sword & Palm */
+.theme-national-day-pattern {
+  position: relative;
+}
+
+.theme-national-day-pattern::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: 
+    /* Crossed swords */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath fill='%23006C35' fill-opacity='0.1' d='M20 80L80 20M25 75L30 80L85 25L80 20L25 75ZM80 80L20 20M75 75L70 80L15 25L20 20L75 75Z'/%3E%3C/svg%3E"),
+    /* Palm trees */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='120' viewBox='0 0 80 120'%3E%3Cpath fill='%23228B22' fill-opacity='0.08' d='M40 120V60M40 60C35 55 20 50 10 55C25 50 35 45 40 50M40 60C45 55 60 50 70 55C55 50 45 45 40 50M40 50C35 45 20 38 10 42C25 38 35 32 40 38M40 50C45 45 60 38 70 42C55 38 45 32 40 38'/%3E%3C/svg%3E");
+  background-size: 200px 200px, 160px 240px;
+  background-position: 30% 40%, 70% 60%;
+  opacity: 0.9;
+}
+
+.theme-national-day-pattern::after {
+  content: '🇸🇦 ⚔️ 🌴';
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  font-size: 1.5rem;
+  opacity: 0.7;
+  pointer-events: none;
+  z-index: 1;
+  letter-spacing: 0.5rem;
+}
+
+/* Founding Day Theme - Sadu Pattern, Palm & Hawk */
+.theme-founding-day-pattern {
+  position: relative;
+}
+
+.theme-founding-day-pattern::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: 
+    /* Sadu geometric pattern */
+    repeating-linear-gradient(
+      90deg,
+      rgba(93, 78, 55, 0.12) 0px,
+      rgba(93, 78, 55, 0.12) 4px,
+      transparent 4px,
+      transparent 20px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(196, 163, 90, 0.1) 0px,
+      rgba(196, 163, 90, 0.1) 3px,
+      transparent 3px,
+      transparent 25px
+    ),
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 30px,
+      rgba(93, 78, 55, 0.08) 30px,
+      rgba(93, 78, 55, 0.08) 34px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 30px,
+      rgba(196, 163, 90, 0.06) 30px,
+      rgba(196, 163, 90, 0.06) 34px
+    ),
+    /* Diamond shapes in Sadu style */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath fill='%235D4E37' fill-opacity='0.1' d='M30 5L55 30L30 55L5 30L30 5ZM30 15L45 30L30 45L15 30L30 15Z'/%3E%3C/svg%3E");
+  background-size: auto, auto, auto, auto, 120px 120px;
+  opacity: 0.9;
+}
+
+.theme-founding-day-pattern::after {
+  content: '🦅 🌴';
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  font-size: 2rem;
+  opacity: 0.7;
+  pointer-events: none;
+  z-index: 1;
+  letter-spacing: 0.8rem;
+}
+
+/* Eid Al-Fitr Theme - Balloons, Confetti & Dallah */
+.theme-eid-pattern {
+  position: relative;
+}
+
+.theme-eid-pattern::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: 
+    /* Balloons */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='100' viewBox='0 0 60 100'%3E%3Cellipse cx='30' cy='35' rx='25' ry='30' fill='%23A855F7' fill-opacity='0.12'/%3E%3Cpath d='M30 65L28 75L32 75L30 65' fill='%23A855F7' fill-opacity='0.12'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='90' viewBox='0 0 50 90'%3E%3Cellipse cx='25' cy='30' rx='20' ry='25' fill='%23EC4899' fill-opacity='0.1'/%3E%3Cpath d='M25 55L23 65L27 65L25 55' fill='%23EC4899' fill-opacity='0.1'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='45' height='85' viewBox='0 0 45 85'%3E%3Cellipse cx='22' cy='28' rx='18' ry='23' fill='%23FFD700' fill-opacity='0.12'/%3E%3Cpath d='M22 51L20 60L24 60L22 51' fill='%23FFD700' fill-opacity='0.12'/%3E%3C/svg%3E"),
+    /* Confetti dots */
+    radial-gradient(circle at 15% 25%, rgba(168, 85, 247, 0.15) 4px, transparent 4px),
+    radial-gradient(circle at 85% 15%, rgba(255, 215, 0, 0.18) 3px, transparent 3px),
+    radial-gradient(circle at 45% 85%, rgba(236, 72, 153, 0.12) 5px, transparent 5px),
+    radial-gradient(circle at 75% 75%, rgba(59, 130, 246, 0.1) 4px, transparent 4px),
+    radial-gradient(circle at 25% 55%, rgba(34, 197, 94, 0.12) 3px, transparent 3px);
+  background-size: 120px 200px, 100px 180px, 90px 170px, 100px 100px, 80px 80px, 90px 90px, 70px 70px, 85px 85px;
+  background-position: 10% 10%, 80% 30%, 50% 60%, 20% 40%, 70% 20%, 40% 80%, 60% 50%, 30% 70%;
+  opacity: 0.9;
+}
+
+.theme-eid-pattern::after {
+  content: '🎈 🎊 ☕';
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  font-size: 1.8rem;
+  opacity: 0.7;
+  pointer-events: none;
+  z-index: 1;
+  letter-spacing: 0.5rem;
+  animation: confetti-float 2s ease-in-out infinite;
+}
+
+@keyframes confetti-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(3deg); }
+}
+
+/* Eid Al-Adha Theme - Sheep, Kaaba & Islamic Geometric */
+.theme-eid-adha-pattern {
+  position: relative;
+}
+
+.theme-eid-adha-pattern::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: 
+    /* Islamic geometric star pattern */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath fill='%23D4AF37' fill-opacity='0.1' d='M40 10L50 25L65 25L55 40L65 55L50 55L40 70L30 55L15 55L25 40L15 25L30 25L40 10Z'/%3E%3Ccircle cx='40' cy='40' r='8' fill='%238B7355' fill-opacity='0.08'/%3E%3C/svg%3E"),
+    /* Kaaba silhouette */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='120' viewBox='0 0 100 120'%3E%3Crect x='20' y='30' width='60' height='70' fill='%23333' fill-opacity='0.06' rx='2'/%3E%3Crect x='35' y='45' width='30' height='40' fill='%23D4AF37' fill-opacity='0.08' rx='1'/%3E%3Ccircle cx='50' cy='25' r='15' fill='%23D4AF37' fill-opacity='0.05'/%3E%3C/svg%3E"),
+    /* Sheep silhouettes */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='50' viewBox='0 0 70 50'%3E%3Cellipse cx='35' cy='30' rx='20' ry='15' fill='%23F5F5DC' fill-opacity='0.15'/%3E%3Ccircle cx='50' cy='25' r='8' fill='%23F5F5DC' fill-opacity='0.12'/%3E%3Ccircle cx='30' cy='35' r='5' fill='%23F5F5DC' fill-opacity='0.1'/%3E%3Ccircle cx='40' cy='35' r='5' fill='%23F5F5DC' fill-opacity='0.1'/%3E%3C/svg%3E"),
+    /* Golden crescent */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 50 50'%3E%3Cpath fill='%23D4AF37' fill-opacity='0.12' d='M25 5C15 5 7 13 7 23C7 33 15 41 25 41C28 41 31 40.3 33.5 39C28.5 36.5 25 31.2 25 25C25 18.8 28.5 13.5 33.5 11C31 9.7 28 9 25 9C25 9 25 5 25 5Z'/%3E%3C/svg%3E");
+  background-size: 160px 160px, 200px 240px, 140px 100px, 100px 100px;
+  background-position: 20% 30%, 70% 50%, 40% 70%, 85% 20%;
+  opacity: 0.9;
+}
+
+.theme-eid-adha-pattern::after {
+  content: '🐑 🕋 🌙';
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  font-size: 1.8rem;
+  opacity: 0.7;
+  pointer-events: none;
+  z-index: 1;
+  letter-spacing: 0.6rem;
+}
+
+/* ============================================ */
+/* PREMIUM FOOD CARD STYLING                   */
+/* Clean, elegant, high-end restaurant look    */
+/* ============================================ */
+
+/* Food image enhancement - vibrancy and brightness */
+.menu-item-image {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px 16px 0 0;
+}
+
+.menu-item-image img {
+  filter: brightness(1.05) saturate(1.15) contrast(1.02);
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+              filter 0.3s ease;
+}
+
+/* Hover/touch zoom effect */
+.menu-item-image:hover img,
+.menu-item-image:active img {
+  transform: scale(1.08);
+  filter: brightness(1.1) saturate(1.2) contrast(1.05);
+}
+
+/* Premium food card styling */
+.food-card {
+  border-radius: 20px;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border) / 0.4);
+  box-shadow: 
+    0 4px 20px -4px rgba(0, 0, 0, 0.08),
+    0 8px 32px -8px rgba(0, 0, 0, 0.06),
+    0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  overflow: hidden;
+}
+
+.food-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 
+    0 12px 40px -8px rgba(0, 0, 0, 0.15),
+    0 20px 50px -12px rgba(0, 0, 0, 0.1),
+    0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* Touch feedback for mobile */
+.food-card:active {
+  transform: translateY(-2px) scale(0.98);
+}
+
+/* Clean typography for descriptions */
+.food-card-description {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: hsl(var(--muted-foreground));
+  font-weight: 400;
+}
+
+/* Calories badge styling */
+.food-card-calories {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+  font-weight: 500;
+}
+
+/* Best seller badge - premium gold */
+.best-seller-badge {
+  background: linear-gradient(135deg, hsl(var(--gold)) 0%, hsl(38 85% 45%) 100%);
+  color: hsl(20 25% 12%);
+  padding: 0.375rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.35);
+}
+
+/* Price styling */
+.food-card-price {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: hsl(var(--primary));
+  line-height: 1;
+}
+
+/* Add button - premium styling */
+.food-card-add-btn {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  padding: 0.75rem 1.25rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px -2px hsl(var(--primary) / 0.35);
+}
+
+.food-card-add-btn:hover {
+  background: hsl(var(--primary) / 0.9);
+  box-shadow: 0 6px 16px -2px hsl(var(--primary) / 0.45);
+  transform: translateY(-1px);
+}
+
+.food-card-add-btn:active {
+  transform: scale(0.96);
+}
