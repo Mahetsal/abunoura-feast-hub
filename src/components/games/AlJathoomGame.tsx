@@ -455,9 +455,9 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
           </div>
 
           {/* Highway Screen */}
-          <div className="relative w-full max-w-[320px] h-[340px] bg-gray-800 rounded-2xl overflow-hidden border-4 border-gray-700 shadow-inner">
+          <div className="relative w-full max-w-[320px] h-[340px] bg-gray-800 rounded-2xl overflow-hidden border-4 border-gray-700 shadow-inner" dir="ltr">
             {/* Road Lanes */}
-            <div className="absolute inset-0 flex">
+            <div className="absolute inset-0 flex z-[5]">
               {/* Lane 0 (Left - Fast Lane) */}
               <div 
                 onClick={() => selectLane(0)}
@@ -480,7 +480,7 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
             </div>
 
             {/* Scrolling Road Animation */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <div className="absolute inset-0 pointer-events-none overflow-hidden z-[10]">
               <div className="w-full h-[680px] flex flex-col justify-around absolute animate-road" style={{ animationDuration: `${2.5 / speed}s` }}>
                 {[...Array(6)].map((_, idx) => (
                   <div key={idx} className="w-full h-1 flex justify-around opacity-30">
@@ -495,7 +495,7 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
             {collectibles.map(item => (
               <div
                 key={item.id}
-                className="absolute text-3xl transition-all duration-100 flex items-center justify-center pointer-events-none"
+                className="absolute text-3xl transition-all duration-100 flex items-center justify-center pointer-events-none z-[20]"
                 style={{
                   left: `${(item.lane * 33.33) + 16.66}%`,
                   top: `${item.y}%`,
@@ -515,7 +515,7 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
               return (
                 <div
                   key={obs.id}
-                  className="absolute text-4xl transition-all duration-75 flex flex-col items-center pointer-events-none"
+                  className="absolute text-4xl transition-all duration-75 flex flex-col items-center pointer-events-none z-[30]"
                   style={{
                     left: `${animatedLeft}%`,
                     top: `${obs.y}%`,
@@ -538,7 +538,7 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
             {/* High Beam Flash Ray */}
             {isFlashing && (
               <div
-                className="absolute w-[33.33%] h-40 bg-gradient-to-t from-yellow-300/40 via-yellow-200/10 to-transparent pointer-events-none"
+                className="absolute w-[33.33%] h-40 bg-gradient-to-t from-yellow-300/40 via-yellow-200/10 to-transparent pointer-events-none z-[40]"
                 style={{
                   left: `${Math.max(0, Math.min(2, playerLane)) * 33.33}%`,
                   bottom: '20%',
@@ -548,7 +548,7 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
 
             {/* Player Car (Nissan Patrol Nismo Vector Representation) */}
             <div
-              className={`absolute w-16 h-16 transition-all duration-75 flex items-center justify-center pointer-events-none
+              className={`absolute w-16 h-16 transition-all duration-75 flex items-center justify-center pointer-events-none z-[50]
                          ${isInvincible ? 'opacity-50 animate-pulse' : 'opacity-100'}`}
               style={{
                 left: `${(Math.max(0, Math.min(2, playerLane)) * 33.33) + 16.66}%`,
