@@ -106,12 +106,14 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
         .map(obs => {
           let sideOffset = obs.sideOffset;
           let lane = obs.lane;
+          let isMoving = obs.isMoving;
           // If the car was flashed, it moves to the right lane
-          if (obs.isMoving && sideOffset < 1) {
+          if (isMoving && sideOffset < 1) {
             sideOffset += 0.08; // speed of lane change
             if (sideOffset >= 1) {
               sideOffset = 0;
               lane = Math.min(2, obs.lane + 1); // Move to right lane
+              isMoving = false; // Finished lane change!
             }
           }
           return {
@@ -119,6 +121,7 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
             y: obs.y + speedRef.current * (deltaTime / 16),
             lane,
             sideOffset,
+            isMoving,
           };
         })
         .filter(obs => obs.y < 100);
@@ -570,38 +573,39 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
           </div>
 
           {/* Game Controls - forced to LTR so left steering button is always on the left */}
-          <div className="w-full max-w-[320px] flex flex-col gap-3" dir="ltr">
-            {/* Steering Controls */}
-            <div className="flex gap-4">
-              <button
-                onTouchStart={(e) => { e.preventDefault(); moveLeft(); }}
-                onClick={(e) => { e.preventDefault(); moveLeft(); }}
-                className="flex-1 py-4 bg-gray-800 border-2 border-gray-700 text-white rounded-2xl font-bold text-xl active:scale-95 transition-all shadow-md touch-manipulation select-none"
-              >
-                ◀
-              </button>
-              
-              <button
-                onTouchStart={(e) => { e.preventDefault(); moveRight(); }}
-                onClick={(e) => { e.preventDefault(); moveRight(); }}
-                className="flex-1 py-4 bg-gray-800 border-2 border-gray-700 text-white rounded-2xl font-bold text-xl active:scale-95 transition-all shadow-md touch-manipulation select-none"
-              >
-                ▶
-              </button>
-            </div>
-
-            {/* High Beam Flash Trigger */}
+          <div className="w-full max-w-[320px] flex gap-2" dir="ltr">
+            {/* Left Button */}
+            <button
+              onTouchStart={(e) => { e.preventDefault(); moveLeft(); }}
+              onClick={(e) => { e.preventDefault(); moveLeft(); }}
+              className="flex-1 py-4 bg-gray-800 border-2 border-gray-700 text-white rounded-2xl font-bold text-xl active:scale-95 transition-all shadow-md touch-manipulation select-none"
+            >
+              ◀
+            </button>
+            
+            {/* High Beam Flash Trigger in the middle */}
             <button
               onTouchStart={(e) => { e.preventDefault(); flashHighBeam(); }}
               onClick={(e) => { e.preventDefault(); flashHighBeam(); }}
-              className={`w-full py-4 rounded-2xl font-bold text-lg shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95 touch-manipulation select-none
+              className={`flex-[1.5] py-4 rounded-2xl font-bold text-sm shadow-md flex items-center justify-center gap-1.5 transition-all active:scale-95 touch-manipulation select-none
                          ${isFlashing 
-                           ? 'bg-yellow-400 text-black shadow-[0_0_20px_rgba(250,204,21,0.6)]' 
-                           : 'bg-gradient-to-r from-red-600 to-red-500 text-white hover:from-red-500 hover:to-red-600'}`}
+                           ? 'bg-yellow-400 text-black shadow-[0_0_15px_rgba(250,204,21,0.6)] border-2 border-yellow-300' 
+                           : 'bg-gradient-to-r from-red-600 to-red-500 border-2 border-red-500 text-white hover:from-red-500 hover:to-red-600'}`}
               dir={language === 'ar' ? 'rtl' : 'ltr'}
             >
-              <Zap className={`w-5 h-5 ${isFlashing ? 'fill-black text-black' : ''}`} />
-              <span>{language === 'ar' ? 'كبّس العالي! 🚨' : 'FLASH HIGH BEAM! 🚨'}</span>
+              <Zap className={`w-4 h-4 ${isFlashing ? 'fill-black text-black' : ''}`} />
+              <span className="text-xs font-cairo">
+                {language === 'ar' ? 'كبّس! 🚨' : 'FLASH! 🚨'}
+              </span>
+            </button>
+            
+            {/* Right Button */}
+            <button
+              onTouchStart={(e) => { e.preventDefault(); moveRight(); }}
+              onClick={(e) => { e.preventDefault(); moveRight(); }}
+              className="flex-1 py-4 bg-gray-800 border-2 border-gray-700 text-white rounded-2xl font-bold text-xl active:scale-95 transition-all shadow-md touch-manipulation select-none"
+            >
+              ▶
             </button>
           </div>
 
