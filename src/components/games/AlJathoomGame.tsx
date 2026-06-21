@@ -12,18 +12,28 @@ interface Obstacle {
   id: number;
   lane: number; // 0, 1, 2
   y: number; // 0 to 100 (percentage from top)
-  type: 'sedan' | 'taxi';
+  type: 'sedan' | 'taxi' | 'police';
   emoji: string;
   isMoving: boolean;
   sideOffset: number; // For lane transition animation
+  isBlasted?: boolean;
+  blastAngle?: number;
 }
 
 interface Collectible {
   id: number;
   lane: number;
   y: number;
-  type: 'mandi' | 'laban';
+  type: 'mandi' | 'laban' | 'feast';
   emoji: string;
+}
+
+interface FloatingText {
+  id: number;
+  text: string;
+  x: number;
+  y: number;
+  color: string;
 }
 
 export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJathoomGameProps) {
@@ -40,6 +50,15 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
   const [speed, setSpeed] = useState(1.5);
   const [ticks, setTicks] = useState(0); // Frame debug counter to verify loop is running
   
+  // Warp speed boost states & refs
+  const [isBoosting, setIsBoosting] = useState(false);
+  const isBoostingRef = useRef(false);
+
+  // Floating text popups
+  const [floatingTexts, setFloatingTexts] = useState<FloatingText[]>([]);
+  const floatingTextsRef = useRef<FloatingText[]>([]);
+  const floatIdRef = useRef(0);
+
   // Refs for the game loop to avoid dependency restarts
   const scoreRef = useRef(0);
   const livesRef = useRef(3);
@@ -54,15 +73,67 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
   const obstacleIdRef = useRef(0);
   const collectibleIdRef = useRef(0);
 
+  // Helper to add arcade popups
+  const addFloatingText = (text: string, lane: number, y: number, color: string = 'text-yellow-400') => {
+    floatIdRef.current += 1;
+    const x = (lane * 33.33) + 16.66;
+    const newText = { id: floatIdRef.current, text, x, y, color };
+    floatingTextsRef.current = [...floatingTextsRef.current, newText];
+    setFloatingTexts(floatingTextsRef.current);
+    
+    setTimeout(() => {
+      floatingTextsRef.current = floatingTextsRef.current.filter(t => t.id !== newText.id);
+      setFloatingTexts(floatingTextsRef.current);
+    }, 800);
+  };
+
+
+  // Touch Swiping Refs & Handlers
+  const touchStartXRef = useRef<number | null>(null);
+  const touchStartYRef = useRef<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartXRef.current = e.touches[0].clientX;
+    touchStartYRef.current = e.touches[0].clientY;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartXRef.current === null || touchStartYRef.current === null) return;
+    
+    const diffX = e.touches[0].clientX - touchStartXRef.current;
+    const diffY = e.touches[0].clientY - touchStartYRef.current;
+
+    // Detect horizontal swipe
+    if (Math.abs(diffX) > 40 && Math.abs(diffX) > Math.abs(diffY)) {
+      if (diffX > 0) {
+        moveRight();
+      } else {
+        moveLeft();
+      }
+      // Reset start coordinates to prevent double steering during a single swipe
+      touchStartXRef.current = null;
+      touchStartYRef.current = null;
+    }
+  };
+
+  const handleTouchEnd = () => {
+    touchStartXRef.current = null;
+    touchStartYRef.current = null;
+  };
+
   // Keyboard controls
   useEffect(() => {
     if (!isPlaying || gameOver) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
-        moveLeft();
-      } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
-        moveRight();
+      if (e.key === 'ArrowLeft') {
+        selectLane(0); // Move directly to far-left lane
+      } else if (e.key === 'ArrowRight') {
+        selectLane(2); // Move directly to far-right lane
+      } else if (e.key === 'a' || e.key === 'A') {
+        moveLeft(); // Single lane change left
+      } else if (e.key === 'd' || e.key === 'D') {
+        moveRight(); // Single lane change right
       } else if (e.key === ' ' || e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
         e.preventDefault();
         flashHighBeam();
@@ -107,31 +178,46 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
           let sideOffset = obs.sideOffset;
           let lane = obs.lane;
           let isMoving = obs.isMoving;
+          
           // If the car was flashed, it moves to the right lane
           if (isMoving && sideOffset < 1) {
-            sideOffset += 0.08; // speed of lane change
+            sideOffset += 0.08 * (deltaTime / 16); // adapt speed of lane change to delta
             if (sideOffset >= 1) {
               sideOffset = 0;
               lane = Math.min(2, obs.lane + 1); // Move to right lane
               isMoving = false; // Finished lane change!
             }
           }
+
+          let y = obs.y;
+          let blastAngle = obs.blastAngle || 0;
+          if (obs.isBlasted) {
+            y = obs.y - 6 * (deltaTime / 16); // fly upwards/backwards fast
+            sideOffset = obs.sideOffset + (obs.lane === 0 ? -0.15 : 0.15) * (deltaTime / 16); // fly outward
+            blastAngle += 20 * (deltaTime / 16); // spin fast
+          } else {
+            const speedMult = obs.type === 'police' ? 1.45 : obs.type === 'taxi' ? 1.15 : 1.0;
+            const boostMult = isBoostingRef.current ? 1.8 : 1.0;
+            y = obs.y + speedRef.current * speedMult * boostMult * (deltaTime / 16);
+          }
+
           return {
             ...obs,
-            y: obs.y + speedRef.current * (deltaTime / 16),
+            y,
             lane,
             sideOffset,
             isMoving,
+            blastAngle,
           };
         })
-        .filter(obs => obs.y < 100);
+        .filter(obs => obs.y < 110 && obs.y > -50 && (!obs.isBlasted || Math.abs(obs.sideOffset) < 3));
 
       // 2. Move collectibles
       const currentCollectibles = collectiblesRef.current;
       const updatedCollectibles = currentCollectibles
         .map(item => ({
           ...item,
-          y: item.y + speedRef.current * (deltaTime / 16),
+          y: item.y + speedRef.current * (isBoostingRef.current ? 1.8 : 1.0) * (deltaTime / 16),
         }))
         .filter(item => item.y < 100);
 
@@ -144,8 +230,16 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
 
         if (isSpawnObstacle) {
           obstacleIdRef.current += 1;
-          const type = Math.random() > 0.5 ? ('sedan' as const) : ('taxi' as const);
-          const emoji = type === 'sedan' ? '🚗' : '🚕';
+          const rand = Math.random();
+          let type: 'sedan' | 'taxi' | 'police' = 'sedan';
+          let emoji = '🚗';
+          if (rand < 0.15) {
+            type = 'police';
+            emoji = '🚓';
+          } else if (rand < 0.40) {
+            type = 'taxi';
+            emoji = '🚕';
+          }
           updatedObstacles.push({
             id: obstacleIdRef.current,
             lane: spawnLane,
@@ -157,8 +251,16 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
           });
         } else {
           collectibleIdRef.current += 1;
-          const type = Math.random() > 0.4 ? ('mandi' as const) : ('laban' as const);
-          const emoji = type === 'mandi' ? '🍚' : '🥛';
+          const rand = Math.random();
+          let type: 'mandi' | 'laban' | 'feast' = 'mandi';
+          let emoji = '🍚';
+          if (rand < 0.10) {
+            type = 'feast';
+            emoji = '🍱';
+          } else if (rand < 0.40) {
+            type = 'laban';
+            emoji = '🥛';
+          }
           updatedCollectibles.push({
             id: collectibleIdRef.current,
             lane: spawnLane,
@@ -173,10 +275,20 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
       // 4. Check collisions with obstacles
       let crashHappened = false;
       updatedObstacles.forEach(obs => {
+        if (obs.isBlasted) return;
         const obsEffectiveLane = obs.isMoving && obs.sideOffset > 0.3 ? obs.lane + 1 : obs.lane;
         const isSameLane = obsEffectiveLane === playerLaneRef.current;
         if (isSameLane && obs.y > 75 && obs.y < 90) {
-          if (!isInvincibleRef.current) {
+          if (isBoostingRef.current) {
+            // Laban boost active: RAM the obstacle!
+            obs.isBlasted = true;
+            obs.blastAngle = 0;
+            scoreRef.current += 150;
+            setScore(scoreRef.current);
+            onScoreChange?.(scoreRef.current);
+            addFloatingText('💥 RAM! +150', playerLaneRef.current, 80, 'text-cyan-300');
+            playGameSound?.('match');
+          } else if (!isInvincibleRef.current) {
             crashHappened = true;
           }
         }
@@ -204,15 +316,45 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
       const remainingCollectibles: Collectible[] = [];
       updatedCollectibles.forEach(item => {
         if (item.lane === playerLaneRef.current && item.y > 75 && item.y < 90) {
-          const points = item.type === 'mandi' ? 100 : 200;
+          let points = 100;
+          let label = '+100 MANDI';
+          let textColor = 'text-yellow-400';
+
+          if (item.type === 'feast') {
+            points = 500;
+            label = '🍱 FEAST! +500';
+            textColor = 'text-green-400 font-extrabold';
+            playGameSound?.('success');
+          } else if (item.type === 'laban') {
+            points = 200;
+            label = '🥛 NISMO BOOST!';
+            textColor = 'text-cyan-300 font-black animate-pulse';
+            
+            // Activate Nismo Warp Speed Boost & Invincibility for 3 seconds
+            setIsBoosting(true);
+            isBoostingRef.current = true;
+            setIsInvincible(true);
+            isInvincibleRef.current = true;
+            
+            setTimeout(() => {
+              setIsBoosting(false);
+              isBoostingRef.current = false;
+              setIsInvincible(false);
+              isInvincibleRef.current = false;
+            }, 3000);
+            
+            playGameSound?.('match');
+          } else {
+            playGameSound?.('match');
+          }
+
           scoreRef.current += points;
           setScore(scoreRef.current);
           onScoreChange?.(scoreRef.current);
+          addFloatingText(label, playerLaneRef.current, 75, textColor);
           
           speedRef.current = 1.5 + Math.min(2.5, scoreRef.current / 2000);
           setSpeed(speedRef.current);
-
-          playGameSound?.('match');
           playSound?.('success');
         } else {
           remainingCollectibles.push(item);
@@ -248,6 +390,7 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
     isInvincibleRef.current = false;
     speedRef.current = 1.5;
     spawnTimerRef.current = 0;
+    isBoostingRef.current = false;
 
     setScore(0);
     setLives(3);
@@ -255,6 +398,9 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
     setObstacles([]);
     setCollectibles([]);
     setIsInvincible(false);
+    setIsBoosting(false);
+    setFloatingTexts([]);
+    floatingTextsRef.current = [];
     setSpeed(1.5);
     setTicks(0);
 
@@ -453,12 +599,21 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
           {/* Instructions */}
           <div className="text-xs text-gray-500 text-center font-cairo">
             {language === 'ar'
-              ? 'اضغط الأسهم للحركة والمسافة للتكشيح بالعالي'
-              : 'Use left/right buttons to steer and FLASH button to clear traffic!'}
+              ? 'قد بحذر وكشح بالعالي لتفسيح الطريق!'
+              : 'Drive carefully and FLASH high beams to clear traffic!'}
           </div>
 
           {/* Highway Screen */}
-          <div className="relative w-full max-w-[320px] h-[340px] bg-gray-800 rounded-2xl overflow-hidden border-4 border-gray-700 shadow-inner select-none touch-none" dir="ltr">
+          <div 
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            className={`relative w-full max-w-[320px] h-[340px] bg-gray-800 rounded-2xl overflow-hidden border-4 shadow-inner select-none touch-none transition-all duration-300
+                       ${isBoosting 
+                         ? 'border-cyan-400 shadow-[0_0_20px_rgba(34,211,238,0.6)]' 
+                         : 'border-gray-700'}`} 
+            dir="ltr"
+          >
             {/* Road Lanes */}
             <div className="absolute inset-0 flex z-[5] select-none touch-none">
               {/* Lane 0 (Left - Fast Lane) */}
@@ -484,7 +639,7 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
 
             {/* Scrolling Road Animation */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden z-[10]">
-              <div className="w-full h-[680px] flex flex-col justify-around absolute animate-road" style={{ animationDuration: `${2.5 / speed}s` }}>
+              <div className="w-full h-[680px] flex flex-col justify-around absolute animate-road" style={{ animationDuration: `${2.5 / (speed * (isBoosting ? 1.8 : 1.0))}s` }}>
                 {[...Array(6)].map((_, idx) => (
                   <div key={idx} className="w-full h-1 flex justify-around opacity-30">
                     <div className="w-1.5 h-6 bg-yellow-500 rounded-full" />
@@ -493,6 +648,15 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
                 ))}
               </div>
             </div>
+
+            {/* Warp Speed Streaks */}
+            {isBoosting && (
+              <div className="absolute inset-0 pointer-events-none z-[12] overflow-hidden">
+                <div className="absolute left-[20%] w-[2px] h-16 bg-cyan-400/60 rounded-full animate-roadScrollFast" />
+                <div className="absolute left-[50%] w-[2px] h-12 bg-white/70 rounded-full animate-roadScrollFast" style={{ animationDelay: '0.15s' }} />
+                <div className="absolute left-[80%] w-[2px] h-20 bg-cyan-400/60 rounded-full animate-roadScrollFast" style={{ animationDelay: '0.05s' }} />
+              </div>
+            )}
 
             {/* Render Collectibles */}
             {collectibles.map(item => (
@@ -505,7 +669,12 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
                   transform: 'translate(-50%, -50%)',
                 }}
               >
-                <div className="bg-black/30 w-10 h-10 rounded-full flex items-center justify-center shadow-lg border border-yellow-500/20 backdrop-blur-xs">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center shadow-lg border backdrop-blur-xs transition-all duration-300
+                                ${item.type === 'feast' 
+                                  ? 'bg-amber-500/30 border-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.5)] scale-110' 
+                                  : item.type === 'laban'
+                                    ? 'bg-cyan-500/30 border-cyan-400 shadow-[0_0_12px_rgba(34,211,238,0.5)] animate-pulse'
+                                    : 'bg-black/30 border-yellow-500/20'}`}>
                   {item.emoji}
                 </div>
               </div>
@@ -522,16 +691,32 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
                   style={{
                     left: `${animatedLeft}%`,
                     top: `${obs.y}%`,
-                    transform: 'translate(-50%, -50%)',
+                    transform: `translate(-50%, -50%) rotate(${obs.blastAngle || 0}deg) scale(${obs.isBlasted ? 1.5 : 1})`,
                   }}
                 >
-                  <span className="filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+                  <span className={`filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] transition-opacity duration-300 ${obs.isBlasted ? 'opacity-70' : 'opacity-100'}`}>
                     {obs.emoji}
                   </span>
+                  
+                  {/* Flashing Police Siren Lights */}
+                  {obs.type === 'police' && !obs.isBlasted && (
+                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 flex gap-0.5 z-[32] pointer-events-none select-none">
+                      <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping shadow-[0_0_8px_#ef4444]" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-ping shadow-[0_0_8px_#3b82f6]" style={{ animationDelay: '0.15s' }} />
+                    </div>
+                  )}
+
                   {/* Blinker if moving right */}
-                  {obs.isMoving && (
+                  {obs.isMoving && !obs.isBlasted && (
                     <span className="absolute -top-1 right-0 text-[10px] text-yellow-400 animate-ping">
                       🧡
+                    </span>
+                  )}
+
+                  {/* Blasted collision sparks */}
+                  {obs.isBlasted && (
+                    <span className="absolute inset-0 text-3xl flex items-center justify-center animate-ping select-none">
+                      💥
                     </span>
                   )}
                 </div>
@@ -552,15 +737,25 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
             {/* Player Car (Nissan Patrol Nismo Vector Representation) */}
             <div
               className={`absolute w-16 h-16 transition-all duration-75 flex items-center justify-center pointer-events-none z-[50]
-                         ${isInvincible ? 'opacity-50 animate-pulse' : 'opacity-100'}`}
+                         ${isInvincible && !isBoosting ? 'opacity-50 animate-pulse' : 'opacity-100'}`}
               style={{
                 left: `${(Math.max(0, Math.min(2, playerLane)) * 33.33) + 16.66}%`,
                 bottom: '10%',
                 transform: 'translateX(-50%)',
               }}
             >
-              <div className="relative w-14 h-14 rounded-xl border-2 border-red-500 shadow-[0_0_10px_rgba(239,68,68,0.8)] bg-black p-1 flex items-center justify-center">
+              <div className={`relative w-14 h-14 rounded-xl border-2 p-1 flex items-center justify-center transition-all duration-300
+                              ${isBoosting 
+                                ? 'border-cyan-400 bg-cyan-950/40 shadow-[0_0_20px_rgba(34,211,238,0.9)]' 
+                                : 'border-red-500 bg-black shadow-[0_0_10px_rgba(239,68,68,0.8)]'}`}
+              >
                 {renderNismoVector()}
+                
+                {/* Neon Shield Pulse Overlay */}
+                {isBoosting && (
+                  <div className="absolute -inset-2 rounded-2xl border-2 border-cyan-400 animate-ping opacity-60 pointer-events-none" />
+                )}
+
                 {/* Flashing lights */}
                 {isFlashing && (
                   <>
@@ -570,43 +765,44 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
                 )}
               </div>
             </div>
+
+            {/* Render Floating Arcade Text Popups */}
+            {floatingTexts.map(t => (
+              <div
+                key={t.id}
+                className={`absolute text-sm font-black font-cairo z-[60] pointer-events-none animate-bounce select-none ${t.color} drop-shadow-[0_2px_5px_rgba(0,0,0,0.95)]`}
+                style={{
+                  left: `${t.x}%`,
+                  top: `${t.y}%`,
+                  transform: 'translate(-50%, -50%)',
+                }}
+              >
+                {t.text}
+              </div>
+            ))}
           </div>
 
-          {/* Game Controls - forced to LTR so left steering button is always on the left */}
-          <div className="w-full max-w-[320px] flex gap-2" dir="ltr">
-            {/* Left Button */}
-            <button
-              onTouchStart={(e) => { e.preventDefault(); moveLeft(); }}
-              onClick={(e) => { e.preventDefault(); moveLeft(); }}
-              className="flex-1 py-4 bg-gray-800 border-2 border-gray-700 text-white rounded-2xl font-bold text-xl active:scale-95 transition-all shadow-md touch-manipulation select-none"
-            >
-              ◀
-            </button>
-            
-            {/* High Beam Flash Trigger in the middle */}
+          {/* Game Controls - removed left/right steering, added instructions, upgraded flash button */}
+          <div className="w-full max-w-[320px] flex flex-col gap-2.5" dir="ltr">
+            {/* High Beam Flash Trigger */}
             <button
               onTouchStart={(e) => { e.preventDefault(); flashHighBeam(); }}
               onClick={(e) => { e.preventDefault(); flashHighBeam(); }}
-              className={`flex-[1.5] py-4 rounded-2xl font-bold text-sm shadow-md flex items-center justify-center gap-1.5 transition-all active:scale-95 touch-manipulation select-none
+              className={`w-full py-4 rounded-2xl font-bold text-sm shadow-md flex items-center justify-center gap-2 transition-all duration-100 hover:scale-[1.02] active:scale-95 touch-manipulation select-none border-2
                          ${isFlashing 
-                           ? 'bg-yellow-400 text-black shadow-[0_0_15px_rgba(250,204,21,0.6)] border-2 border-yellow-300' 
-                           : 'bg-gradient-to-r from-red-600 to-red-500 border-2 border-red-500 text-white hover:from-red-500 hover:to-red-600'}`}
+                           ? 'bg-yellow-400 text-black border-yellow-300 shadow-[0_0_20px_rgba(250,204,21,0.8)]' 
+                           : 'bg-gradient-to-r from-red-600 to-red-500 border-red-500 text-white hover:from-red-500 hover:to-red-600 shadow-[0_4px_15px_rgba(220,38,38,0.25)]'}`}
               dir={language === 'ar' ? 'rtl' : 'ltr'}
             >
-              <Zap className={`w-4 h-4 ${isFlashing ? 'fill-black text-black' : ''}`} />
-              <span className="text-xs font-cairo">
-                {language === 'ar' ? 'كبّس! 🚨' : 'FLASH! 🚨'}
+              <Zap className={`w-4 h-4 ${isFlashing ? 'fill-black text-black animate-bounce' : 'animate-pulse'}`} />
+              <span className="text-xs font-bold font-cairo uppercase tracking-wider">
+                {language === 'ar' ? 'كبّس بالعالي! 🚨' : 'FLASH HIGH BEAM! 🚨'}
               </span>
             </button>
             
-            {/* Right Button */}
-            <button
-              onTouchStart={(e) => { e.preventDefault(); moveRight(); }}
-              onClick={(e) => { e.preventDefault(); moveRight(); }}
-              className="flex-1 py-4 bg-gray-800 border-2 border-gray-700 text-white rounded-2xl font-bold text-xl active:scale-95 transition-all shadow-md touch-manipulation select-none"
-            >
-              ▶
-            </button>
+            <div className="text-[10px] text-gray-400 text-center font-cairo animate-pulse tracking-wide font-medium">
+              {language === 'ar' ? '👈 اسحب لليمين واليسار للتجاوز 👉' : '👈 Swipe Left or Right to Switch Lanes 👉'}
+            </div>
           </div>
 
           {/* Loop Running Verification Text */}
@@ -616,14 +812,21 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
         </div>
       )}
 
-      {/* Road animation style */}
+      {/* Road animation styles */}
       <style>{`
         @keyframes roadScroll {
           0% { transform: translateY(-50%); }
           100% { transform: translateY(0); }
         }
+        @keyframes roadScrollFast {
+          0% { transform: translateY(-150%); }
+          100% { transform: translateY(350%); }
+        }
         .animate-road {
           animation: roadScroll linear infinite;
+        }
+        .animate-roadScrollFast {
+          animation: roadScrollFast 0.4s linear infinite;
         }
       `}</style>
     </div>
