@@ -66,6 +66,12 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
       } else if (e.key === ' ' || e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
         e.preventDefault();
         flashHighBeam();
+      } else if (e.key === '1') {
+        selectLane(0);
+      } else if (e.key === '2') {
+        selectLane(1);
+      } else if (e.key === '3') {
+        selectLane(2);
       }
     };
 
@@ -82,12 +88,14 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
       return;
     }
 
-    let lastTime = performance.now();
+    let lastTime: number | null = null;
 
-    const updateGame = (time: number) => {
-      const now = performance.now();
-      const deltaTime = Math.min(100, now - lastTime); // Cap delta time to prevent massive jumps on lag
-      lastTime = now;
+    const updateGame = (timestamp: number) => {
+      if (lastTime === null) {
+        lastTime = timestamp;
+      }
+      const deltaTime = Math.max(0, Math.min(100, timestamp - lastTime));
+      lastTime = timestamp;
 
       // Increment debug tick counter
       setTicks(t => t + 1);
@@ -252,23 +260,35 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
     playSound?.('ding');
   };
 
-  const moveLeft = () => {
-    if (playerLaneRef.current > 0) {
-      playerLaneRef.current -= 1;
-      setPlayerLane(playerLaneRef.current);
+  function moveLeft() {
+    const nextLane = Math.max(0, playerLaneRef.current - 1);
+    if (nextLane !== playerLaneRef.current) {
+      playerLaneRef.current = nextLane;
+      setPlayerLane(nextLane);
       playGameSound?.('pop');
     }
-  };
+  }
 
-  const moveRight = () => {
-    if (playerLaneRef.current < 2) {
-      playerLaneRef.current += 1;
-      setPlayerLane(playerLaneRef.current);
+  function moveRight() {
+    const nextLane = Math.min(2, playerLaneRef.current + 1);
+    if (nextLane !== playerLaneRef.current) {
+      playerLaneRef.current = nextLane;
+      setPlayerLane(nextLane);
       playGameSound?.('pop');
     }
-  };
+  }
 
-  const flashHighBeam = () => {
+  function selectLane(laneIndex: number) {
+    if (!isPlaying || gameOver) return;
+    const targetLane = Math.max(0, Math.min(2, laneIndex));
+    if (playerLaneRef.current !== targetLane) {
+      playerLaneRef.current = targetLane;
+      setPlayerLane(targetLane);
+      playGameSound?.('pop');
+    }
+  }
+
+  function flashHighBeam() {
     if (isFlashing) return;
     setIsFlashing(true);
     playSound?.('ding');
@@ -299,7 +319,7 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
 
     obstaclesRef.current = updated;
     setObstacles(updated);
-  };
+  }
 
   // Nismo SUV Vector Drawing
   const renderNismoVector = () => (
@@ -437,17 +457,26 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
           {/* Highway Screen */}
           <div className="relative w-full max-w-[320px] h-[340px] bg-gray-800 rounded-2xl overflow-hidden border-4 border-gray-700 shadow-inner">
             {/* Road Lanes */}
-            <div className="absolute inset-0 flex">
+            <div className="absolute inset-0 flex z-10">
               {/* Lane 0 (Left - Fast Lane) */}
-              <div className="relative flex-1 h-full border-r-2 border-dashed border-yellow-500/40 bg-gray-900">
-                <div className="absolute top-2 left-2 text-[10px] text-red-500/40 font-bold font-cairo tracking-tight rotate-90 origin-top-left">
+              <div 
+                onClick={() => selectLane(0)}
+                className="relative flex-1 h-full border-r-2 border-dashed border-yellow-500/40 bg-gray-900 cursor-pointer hover:bg-white/5 transition-colors"
+              >
+                <div className="absolute top-2 left-2 text-[10px] text-red-500/40 font-bold font-cairo tracking-tight rotate-90 origin-top-left select-none">
                   {language === 'ar' ? 'تجاوز' : 'FAST'}
                 </div>
               </div>
               {/* Lane 1 (Middle) */}
-              <div className="flex-1 h-full border-r-2 border-dashed border-yellow-500/40 bg-gray-800/90" />
+              <div 
+                onClick={() => selectLane(1)}
+                className="flex-1 h-full border-r-2 border-dashed border-yellow-500/40 bg-gray-800/90 cursor-pointer hover:bg-white/5 transition-colors"
+              />
               {/* Lane 2 (Right) */}
-              <div className="flex-1 h-full bg-gray-800/80" />
+              <div 
+                onClick={() => selectLane(2)}
+                className="flex-1 h-full bg-gray-800/80 cursor-pointer hover:bg-white/5 transition-colors"
+              />
             </div>
 
             {/* Scrolling Road Animation */}
@@ -511,7 +540,7 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
               <div
                 className="absolute w-[33.33%] h-40 bg-gradient-to-t from-yellow-300/40 via-yellow-200/10 to-transparent pointer-events-none"
                 style={{
-                  left: `${playerLane * 33.33}%`,
+                  left: `${Math.max(0, Math.min(2, playerLane)) * 33.33}%`,
                   bottom: '20%',
                 }}
               />
@@ -519,10 +548,10 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
 
             {/* Player Car (Nissan Patrol Nismo Vector Representation) */}
             <div
-              className={`absolute w-16 h-16 transition-all duration-75 flex items-center justify-center
+              className={`absolute w-16 h-16 transition-all duration-75 flex items-center justify-center pointer-events-none
                          ${isInvincible ? 'opacity-50 animate-pulse' : 'opacity-100'}`}
               style={{
-                left: `${(playerLane * 33.33) + 16.66}%`,
+                left: `${(Math.max(0, Math.min(2, playerLane)) * 33.33) + 16.66}%`,
                 bottom: '10%',
                 transform: 'translateX(-50%)',
               }}
@@ -545,15 +574,17 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
             {/* Steering Controls */}
             <div className="flex gap-4">
               <button
-                onClick={moveLeft}
-                className="flex-1 py-4 bg-gray-800 border-2 border-gray-700 text-white rounded-2xl font-bold text-xl active:scale-95 transition-all shadow-md"
+                onTouchStart={(e) => { e.preventDefault(); moveLeft(); }}
+                onClick={(e) => { e.preventDefault(); moveLeft(); }}
+                className="flex-1 py-4 bg-gray-800 border-2 border-gray-700 text-white rounded-2xl font-bold text-xl active:scale-95 transition-all shadow-md touch-manipulation select-none"
               >
                 ◀
               </button>
               
               <button
-                onClick={moveRight}
-                className="flex-1 py-4 bg-gray-800 border-2 border-gray-700 text-white rounded-2xl font-bold text-xl active:scale-95 transition-all shadow-md"
+                onTouchStart={(e) => { e.preventDefault(); moveRight(); }}
+                onClick={(e) => { e.preventDefault(); moveRight(); }}
+                className="flex-1 py-4 bg-gray-800 border-2 border-gray-700 text-white rounded-2xl font-bold text-xl active:scale-95 transition-all shadow-md touch-manipulation select-none"
               >
                 ▶
               </button>
@@ -561,8 +592,9 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
 
             {/* High Beam Flash Trigger */}
             <button
-              onClick={flashHighBeam}
-              className={`w-full py-4 rounded-2xl font-bold text-lg shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95
+              onTouchStart={(e) => { e.preventDefault(); flashHighBeam(); }}
+              onClick={(e) => { e.preventDefault(); flashHighBeam(); }}
+              className={`w-full py-4 rounded-2xl font-bold text-lg shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95 touch-manipulation select-none
                          ${isFlashing 
                            ? 'bg-yellow-400 text-black shadow-[0_0_20px_rgba(250,204,21,0.6)]' 
                            : 'bg-gradient-to-r from-red-600 to-red-500 text-white hover:from-red-500 hover:to-red-600'}`}
