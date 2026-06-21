@@ -458,9 +458,9 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
           </div>
 
           {/* Highway Screen */}
-          <div className="relative w-full max-w-[320px] h-[340px] bg-gray-800 rounded-2xl overflow-hidden border-4 border-gray-700 shadow-inner" dir="ltr">
+          <div className="relative w-full max-w-[320px] h-[340px] bg-gray-800 rounded-2xl overflow-hidden border-4 border-gray-700 shadow-inner select-none touch-none" dir="ltr">
             {/* Road Lanes */}
-            <div className="absolute inset-0 flex z-[5]">
+            <div className="absolute inset-0 flex z-[5] select-none touch-none">
               {/* Lane 0 (Left - Fast Lane) */}
               <div 
                 onClick={() => selectLane(0)}
