@@ -314,7 +314,7 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
       // 5. Check collisions with collectibles
       const remainingCollectibles: Collectible[] = [];
       updatedCollectibles.forEach(item => {
-        if (item.lane === playerLaneRef.current && item.y > 75 && item.y < 90) {
+        if (item.lane === playerLaneRef.current && item.y > PLAYER_ZONE_TOP && item.y < PLAYER_ZONE_BOTTOM) {
           let points = 100;
           let label = '+100 MANDI';
           let textColor = 'text-yellow-400';
@@ -328,18 +328,16 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
             points = 200;
             label = '🥛 NISMO BOOST!';
             textColor = 'text-cyan-300 font-black animate-pulse';
-            
+
             // Activate Nismo Warp Speed Boost & Invincibility for 3 seconds
             setIsBoosting(true);
             isBoostingRef.current = true;
-            setIsInvincible(true);
-            isInvincibleRef.current = true;
-            
-            setTimeout(() => {
+            startInvincibility(3000);
+
+            if (boostTimeoutRef.current) clearTimeout(boostTimeoutRef.current);
+            boostTimeoutRef.current = setTimeout(() => {
               setIsBoosting(false);
               isBoostingRef.current = false;
-              setIsInvincible(false);
-              isInvincibleRef.current = false;
             }, 3000);
             
             playGameSound?.('match');
