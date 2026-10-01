@@ -244,6 +244,7 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
             id: obstacleIdRef.current,
             lane: spawnLane,
             y: -10,
+            prevY: -10,
             type,
             emoji,
             isMoving: false,
