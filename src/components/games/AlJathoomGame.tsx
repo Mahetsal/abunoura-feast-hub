@@ -202,6 +202,7 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
 
           return {
             ...obs,
+            prevY: obs.y,
             y,
             lane,
             sideOffset,
