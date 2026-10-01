@@ -23,17 +23,21 @@ describe('AlJathoomGame Component', () => {
       startBtn.click();
     });
 
-    // Verify it transitions to playing screen (showing steering buttons)
-    expect(screen.getByText(/◀/i)).toBeInTheDocument();
-    expect(screen.getByText(/▶/i)).toBeInTheDocument();
+    // Playing screen shows the high-beam flash button
+    const flashBtn = screen.getByText(/كبّس بالعالي/i);
+    expect(flashBtn).toBeInTheDocument();
 
-    // Advance timers/frames to check for spawn
-    await act(async () => {
-      // Advance by 2 seconds to trigger spawn manager (>1.5s spawn rate)
-      vi.advanceTimersByTime(2000);
-    });
+    // Run many frames and flash repeatedly — must not throw or freeze
+    for (let i = 0; i < 20; i++) {
+      await act(async () => {
+        vi.advanceTimersByTime(200);
+      });
+      await act(async () => {
+        flashBtn.click();
+      });
+    }
 
-    // Let's verify no console errors occurred and component is stable
+    expect(container).toBeTruthy();
     vi.useRealTimers();
   });
 });
