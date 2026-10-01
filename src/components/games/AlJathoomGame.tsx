@@ -273,13 +273,16 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
         spawnTimerRef.current = 0;
       }
 
-      // 4. Check collisions with obstacles
+      // 4. Check collisions with obstacles (swept check so fast traffic can never pass through unseen)
       let crashHappened = false;
       updatedObstacles.forEach(obs => {
         if (obs.isBlasted) return;
-        const obsEffectiveLane = obs.isMoving && obs.sideOffset > 0.3 ? obs.lane + 1 : obs.lane;
+        const obsEffectiveLane = obs.isMoving && obs.sideOffset > 0.3
+          ? Math.min(2, obs.lane + 1)
+          : obs.lane;
         const isSameLane = obsEffectiveLane === playerLaneRef.current;
-        if (isSameLane && obs.y > 75 && obs.y < 90) {
+        const enteredZone = obs.y > PLAYER_ZONE_TOP && obs.prevY < PLAYER_ZONE_BOTTOM;
+        if (isSameLane && enteredZone) {
           if (isBoostingRef.current) {
             // Laban boost active: RAM the obstacle!
             obs.isBlasted = true;
@@ -303,13 +306,8 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
           setIsPlaying(false);
           playGameSound?.('fanfare');
         } else {
-          isInvincibleRef.current = true;
-          setIsInvincible(true);
+          startInvincibility(2000);
           playGameSound?.('flip');
-          setTimeout(() => {
-            isInvincibleRef.current = false;
-            setIsInvincible(false);
-          }, 2000);
         }
       }
 
