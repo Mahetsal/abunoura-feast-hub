@@ -12,6 +12,7 @@ interface Obstacle {
   id: number;
   lane: number; // 0, 1, 2
   y: number; // 0 to 100 (percentage from top)
+  prevY: number; // position in the previous frame (used for swept collision checks)
   type: 'sedan' | 'taxi' | 'police';
   emoji: string;
   isMoving: boolean;
