@@ -411,6 +411,7 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
     obstaclesRef.current = [];
     collectiblesRef.current = [];
     isInvincibleRef.current = false;
+    invincibleUntilRef.current = 0;
     speedRef.current = 1.5;
     spawnTimerRef.current = 0;
     isBoostingRef.current = false;
