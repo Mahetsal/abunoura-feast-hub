@@ -22,7 +22,7 @@ export function AboutSection() {
           {/* Story text */}
           <p className="font-cairo text-lg md:text-xl leading-loose text-foreground/90">
             {language === 'ar' 
-              ? 'في سياق للمندي والولائم، الحكاية بدأت من عشقنا للتراث. نحن لا نقدم مجرد وجبة، بل ننقل لك أسرار طهي المندي في حفر الأرض وعلى لهب الخشب الطبيعي، لنصل لبيتك بنفس الجودة والكرم الذي اعتدت عليه في عزائمنا العربية.'
+              ? 'في سياق، الحكاية بدأت من عشقنا للتراث... نحن لا نقدم مجرد وجبة، بل ننقل لك أسرار طهي المندي في حفر الأرض وعلى لهب الخشب الطبيعي، لنصل لبيتك بنفس الجودة والكرم الذي اعتدت عليه في عزائمنا العربية'
               : 'At Siyaq Mandi & Feasts, our story began with a passion for heritage. We don\'t just serve a meal – we bring you the secrets of traditional mandi, cooked in underground pits over natural wood fire, delivering to your home with the same quality and generosity you\'d expect from our Arab feasts.'}
           </p>
 

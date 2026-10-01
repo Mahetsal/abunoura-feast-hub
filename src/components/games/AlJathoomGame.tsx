@@ -21,6 +21,10 @@ interface Obstacle {
   blastAngle?: number;
 }
 
+// Vertical band (in % of road height) where the player's car sits
+const PLAYER_ZONE_TOP = 72;
+const PLAYER_ZONE_BOTTOM = 92;
+
 interface Collectible {
   id: number;
   lane: number;
@@ -73,6 +77,27 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
   const gameLoopRef = useRef<number | null>(null);
   const obstacleIdRef = useRef(0);
   const collectibleIdRef = useRef(0);
+  const boostTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const invincibleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const invincibleUntilRef = useRef(0);
+
+  // Single invincibility timer: extends (never shortens) the protection window
+  const startInvincibility = (ms: number) => {
+    const until = Math.max(invincibleUntilRef.current, Date.now() + ms);
+    invincibleUntilRef.current = until;
+    isInvincibleRef.current = true;
+    setIsInvincible(true);
+    if (invincibleTimeoutRef.current) clearTimeout(invincibleTimeoutRef.current);
+    invincibleTimeoutRef.current = setTimeout(() => {
+      isInvincibleRef.current = false;
+      setIsInvincible(false);
+    }, until - Date.now());
+  };
+
+  useEffect(() => () => {
+    if (boostTimeoutRef.current) clearTimeout(boostTimeoutRef.current);
+    if (invincibleTimeoutRef.current) clearTimeout(invincibleTimeoutRef.current);
+  }, []);
 
   // Helper to add arcade popups
   const addFloatingText = (text: string, lane: number, y: number, color: string = 'text-yellow-400') => {
@@ -249,6 +274,7 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
             emoji,
             isMoving: false,
             sideOffset: 0,
+            blastAngle: 0,
           });
         } else {
           collectibleIdRef.current += 1;
@@ -385,6 +411,7 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
     obstaclesRef.current = [];
     collectiblesRef.current = [];
     isInvincibleRef.current = false;
+    invincibleUntilRef.current = 0;
     speedRef.current = 1.5;
     spawnTimerRef.current = 0;
     isBoostingRef.current = false;
