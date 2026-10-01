@@ -1,7 +1,8 @@
 import { useApp } from '@/context/AppContext';
 import { Phone, MapPin, Clock } from 'lucide-react';
 import { restaurantInfo } from '@/data/menu';
-import logo from '@/assets/logo-new.jpeg';
+import logoAsset from '@/assets/siyaq-logo.png.asset.json';
+const logo = logoAsset.url;
 
 // Social media icons as SVG components
 const InstagramIcon = () => (

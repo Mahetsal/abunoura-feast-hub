@@ -1,6 +1,7 @@
 import { useApp } from '@/context/AppContext';
 import { ShoppingCart, Globe, Volume2, VolumeX, History, Menu } from 'lucide-react';
-import logo from '@/assets/logo-new.jpeg';
+import logoAsset from '@/assets/siyaq-logo.png.asset.json';
+const logo = logoAsset.url;
 import { useState } from 'react';
 
 interface HeaderProps {

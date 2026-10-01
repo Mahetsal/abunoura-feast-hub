@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { Mail, Lock, User, Phone, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { normalizePhoneNumber } from '@/lib/phoneUtils';
-import logo from '@/assets/logo-new.jpeg';
+import logoAsset from '@/assets/siyaq-logo.png.asset.json';
+const logo = logoAsset.url;
 
 // Storage key for registered users
 const REGISTERED_USERS_KEY = 'mandi_registered_users';

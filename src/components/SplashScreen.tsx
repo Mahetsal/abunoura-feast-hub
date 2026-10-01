@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import logo from '@/assets/logo-new.jpeg';
+import logoAsset from '@/assets/siyaq-logo.png.asset.json';
+const logo = logoAsset.url;
 
 interface SplashScreenProps {
   onComplete: () => void;
