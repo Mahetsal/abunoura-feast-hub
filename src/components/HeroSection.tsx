@@ -22,7 +22,7 @@ export function HeroSection() {
           {/* Brand Title */}
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-cairo font-bold text-white leading-tight tracking-tight mb-4
                          [text-shadow:_0_4px_20px_rgba(0,0,0,0.7),_0_2px_8px_rgba(0,0,0,0.5)]">
-            مندي أبو نورة
+            سياق للمندي والولائم
           </h1>
 
           {/* Gold Divider */}
@@ -36,8 +36,8 @@ export function HeroSection() {
           <p className="text-sm sm:text-base md:text-lg text-white/90 max-w-3xl leading-relaxed font-cairo mb-8
                         [text-shadow:_0_2px_10px_rgba(0,0,0,0.6)]">
             {language === 'ar'
-              ? 'مرحباً بكم في منصة أبو نورة! ندمج الكرم بالابتكار من خلال نظام الهوية الذكية الذي يغير واجهة التطبيق تلقائياً لتواكب مناسباتنا الوطنية والدينية. المنيو التفاعلي مصمم بالذكاء الاصطناعي لضمان تجربة طلب سلسة.'
-              : 'Welcome to Abu Noura! We blend generosity with innovation through a smart identity system that automatically adapts the app to match our national and religious occasions. The interactive menu is AI-designed for a seamless ordering experience.'}
+              ? 'مرحباً بكم في منصة سياق! ندمج الكرم بالابتكار من خلال نظام الهوية الذكية الذي يغير واجهة التطبيق تلقائياً لتواكب مناسباتنا الوطنية والدينية. المنيو التفاعلي مصمم بالذكاء الاصطناعي لضمان تجربة طلب سلسة.'
+              : 'Welcome to Siyaq! We blend generosity with innovation through a smart identity system that automatically adapts the app to match our national and religious occasions. The interactive menu is AI-designed for a seamless ordering experience.'}
           </p>
 
           {/* AI Quick Actions */}

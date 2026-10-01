@@ -38,7 +38,7 @@ export function Header({ onCartClick, onHistoryClick, cartCount }: HeaderProps) 
           <div className="flex items-center gap-3">
             <img
               src={logo}
-              alt="مندي أبو نورة"
+              alt="سياق للمندي والولائم"
               className="h-12 md:h-14 w-auto object-contain animate-logo-float"
               style={{
                 filter: 'drop-shadow(0 0 8px rgba(255,215,0,0.4)) drop-shadow(0 2px 6px rgba(0,0,0,0.2))',
@@ -46,7 +46,7 @@ export function Header({ onCartClick, onHistoryClick, cartCount }: HeaderProps) 
             />
             <div className="hidden sm:block">
               <h1 className="text-2xl md:text-3xl font-bold text-primary">
-                مندي أبو نورة
+                سياق للمندي والولائم
               </h1>
               <p className="text-sm md:text-base text-muted-foreground">
                 المذاق الأصيل

@@ -311,12 +311,12 @@ export function SmartAssistant({ onCheckout }: { onCheckout: () => void }) {
   const getGreeting = () => {
     if (userProfile?.name) {
       return language === 'ar' 
-        ? `مرحباً بك يا ${userProfile.name} في مندي أبو نورة، كيف أخدمك اليوم؟`
-        : `Welcome back ${userProfile.name} to Mandi Abu Noura, how can I help you today?`;
+        ? `مرحباً بك يا ${userProfile.name} في سياق للمندي والولائم، كيف أخدمك اليوم؟`
+        : `Welcome back ${userProfile.name} to Siyaq Mandi & Feasts, how can I help you today?`;
     }
     return language === 'ar' 
-      ? 'مرحباً بك في مندي أبو نورة، كيف أخدمك اليوم؟'
-      : 'Welcome to Mandi Abu Noura, how can I help you today?';
+      ? 'مرحباً بك في سياق للمندي والولائم، كيف أخدمك اليوم؟'
+      : 'Welcome to Siyaq Mandi & Feasts, how can I help you today?';
   };
 
   return (
@@ -339,7 +339,7 @@ export function SmartAssistant({ onCheckout }: { onCheckout: () => void }) {
               <img src={aiAvatar} alt="" className="w-14 h-14 object-cover rounded-full border-2 border-primary-foreground/20" />
               <div className="flex-1">
                 <h3 className="font-bold text-lg">
-                  {language === 'ar' ? 'مساعد أبو نورة الذكي' : 'Abu Noura Smart Assistant'}
+                  {language === 'ar' ? 'مساعد سياق الذكي' : 'Siyaq Smart Assistant'}
                 </h3>
                 <p className="text-sm opacity-80">
                   {language === 'ar' ? 'جاهز لخدمتك' : 'Ready to serve you'}

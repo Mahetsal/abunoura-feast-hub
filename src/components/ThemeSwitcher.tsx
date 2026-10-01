@@ -88,7 +88,7 @@ export const ThemeIcons = {
 
 // Theme-specific icons for header display
 export const themeHeaderIcons: Record<SeasonalTheme, { icon: string; label: string; svgIcon?: React.ReactNode }> = {
-  default: { icon: '🍽️', label: 'مندي أبو نورة' },
+  default: { icon: '🍽️', label: 'سياق للمندي والولائم' },
   ramadan: { icon: '🏮', label: 'رمضان كريم', svgIcon: <ThemeIcons.Lantern /> },
   'national-day': { icon: '⚔️', label: 'اليوم الوطني', svgIcon: <ThemeIcons.Sword /> },
   'founding-day': { icon: '🦅', label: 'يوم التأسيس', svgIcon: <ThemeIcons.Hawk /> },

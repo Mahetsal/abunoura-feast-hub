@@ -56,7 +56,7 @@ export function PickupReadyTimer({ isActive }: PickupReadyTimerProps) {
           allowFullScreen
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
-          title={language === 'ar' ? 'موقع مندي أبو نورة' : 'Mandi Abu Noura Location'}
+          title={language === 'ar' ? 'موقع سياق للمندي والولائم' : 'Siyaq Mandi & Feasts Location'}
         />
       </div>
 

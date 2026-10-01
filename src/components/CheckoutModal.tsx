@@ -776,7 +776,7 @@ export function CheckoutModal({ isOpen, onClose, onConfirm }: CheckoutModalProps
                             if (foundCode.code === 'KARAM') {
                               toast.success('أهلاً بك يا كرم! تم تطبيق خصم التوصيل المجاني لعيونك. 🎉');
                             } else if (foundCode.code === 'FIRST') {
-                              toast.success('أهلاً بك في مندي أبو نورة! نورتنا. خصم 15% على طلبك الأول! 🎁');
+                              toast.success('أهلاً بك في سياق للمندي والولائم! نورتنا. خصم 15% على طلبك الأول! 🎁');
                             } else if (foundCode.code === 'KSA96') {
                               toast.success('يوم وطني سعيد! خصم 20% بمناسبة اليوم الوطني 🇸🇦');
                             } else if (foundCode.code === 'RAMADAN') {
