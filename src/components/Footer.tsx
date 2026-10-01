@@ -1,7 +1,8 @@
 import { useApp } from '@/context/AppContext';
 import { Phone, MapPin, Clock } from 'lucide-react';
 import { restaurantInfo } from '@/data/menu';
-import logo from '@/assets/logo-new.jpeg';
+import logoAsset from '@/assets/siyaq-logo.png.asset.json';
+const logo = logoAsset.url;
 
 // Social media icons as SVG components
 const InstagramIcon = () => (
@@ -28,19 +29,19 @@ export function Footer() {
   const socialLinks = [
     {
       name: 'Instagram',
-      url: 'https://instagram.com/abu_nura_mandi',
+      url: 'https://instagram.com/siyaq_sa',
       icon: <InstagramIcon />,
       color: 'hover:text-pink-500',
     },
     {
       name: 'TikTok',
-      url: 'https://tiktok.com/@abu_nura_mandi',
+      url: 'https://tiktok.com/@siyaq_sa',
       icon: <TikTokIcon />,
       color: 'hover:text-foreground',
     },
     {
       name: 'Snapchat',
-      url: 'https://snapchat.com/add/abu_nura_mandi',
+      url: 'https://snapchat.com/add/siyaq_sa',
       icon: <SnapchatIcon />,
       color: 'hover:text-yellow-400',
     },
@@ -56,7 +57,7 @@ export function Footer() {
               {/* Logo - Clean, Transparent, NO FRAME */}
               <img
                 src={logo}
-                alt="مندي أبو نورة"
+                alt="سياق للمندي والولائم"
                 className="w-16 h-16 object-contain animate-logo-float"
                 style={{
                   filter: 'drop-shadow(0 0 12px rgba(255,215,0,0.5)) drop-shadow(0 2px 8px rgba(0,0,0,0.3))',
@@ -64,7 +65,7 @@ export function Footer() {
               />
               <div>
                 <h3 className="text-xl font-bold">
-                  مندي أبو نورة
+                  سياق للمندي والولائم
                 </h3>
                 <p className="text-sm opacity-80">
                   المذاق الأصيل
@@ -140,7 +141,7 @@ export function Footer() {
         {/* Copyright */}
         <div className="border-t border-primary-foreground/20 mt-8 pt-6 text-center">
           <p className="text-sm opacity-60">
-            © {new Date().getFullYear()} مندي أبو نورة. جميع الحقوق محفوظة
+            © {new Date().getFullYear()} سياق للمندي والولائم. جميع الحقوق محفوظة
           </p>
         </div>
       </div>

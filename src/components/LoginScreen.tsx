@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { Mail, Lock, User, Phone, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { normalizePhoneNumber } from '@/lib/phoneUtils';
-import logo from '@/assets/logo-new.jpeg';
+import logoAsset from '@/assets/siyaq-logo.png.asset.json';
+const logo = logoAsset.url;
 
 // Storage key for registered users
 const REGISTERED_USERS_KEY = 'mandi_registered_users';
@@ -182,13 +183,13 @@ export function LoginScreen({ onComplete }: LoginScreenProps) {
         <div className="text-center mb-8">
           <img 
             src={logo} 
-            alt="مندي أبو نورة" 
+            alt="سياق للمندي والولائم" 
             className="w-28 h-28 mx-auto mb-4 object-contain animate-logo-float"
             style={{
               filter: 'drop-shadow(0 0 12px rgba(255,215,0,0.5)) drop-shadow(0 4px 12px rgba(0,0,0,0.2))',
             }}
           />
-          <h1 className="text-2xl font-bold text-secondary mb-1">مندي أبو نورة</h1>
+          <h1 className="text-2xl font-bold text-secondary mb-1">سياق للمندي والولائم</h1>
           <p className="text-sm text-gold">المذاق الأصيل</p>
         </div>
 

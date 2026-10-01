@@ -21,16 +21,16 @@ export function SupportButton() {
 
   const handleChangeAddress = () => {
     const message = language === 'ar' 
-      ? `أهلاً مندي أبو نورة، أريد تعديل عنوان التوصيل لطلبي رقم ${currentOrderId || ''}`
-      : `Hello Mandi Abu Noura, I want to change my delivery address for order ${currentOrderId || ''}`;
+      ? `أهلاً سياق للمندي والولائم، أريد تعديل عنوان التوصيل لطلبي رقم ${currentOrderId || ''}`
+      : `Hello Siyaq Mandi & Feasts, I want to change my delivery address for order ${currentOrderId || ''}`;
     window.open(`https://wa.me/${restaurantInfo.phone}?text=${encodeURIComponent(message)}`, '_blank');
     setIsOpen(false);
   };
 
   const handleContact = () => {
     const message = language === 'ar'
-      ? 'أهلاً مندي أبو نورة، لدي استفسار بخصوص طلبي'
-      : 'Hello Mandi Abu Noura, I have an inquiry about my order';
+      ? 'أهلاً سياق للمندي والولائم، لدي استفسار بخصوص طلبي'
+      : 'Hello Siyaq Mandi & Feasts, I have an inquiry about my order';
     window.open(`https://wa.me/${restaurantInfo.phone}?text=${encodeURIComponent(message)}`, '_blank');
     setIsOpen(false);
   };

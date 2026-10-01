@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import logo from '@/assets/logo-new.jpeg';
+import logoAsset from '@/assets/siyaq-logo.png.asset.json';
+const logo = logoAsset.url;
 
 interface SplashScreenProps {
   onComplete: () => void;
@@ -96,7 +97,7 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
         >
           <img 
             src={logo} 
-            alt="مندي أبو نورة" 
+            alt="سياق للمندي والولائم" 
             className="w-48 h-48 md:w-64 md:h-64 object-contain animate-logo-float"
             style={{
               filter: 'drop-shadow(0 0 20px rgba(255,215,0,0.6)) drop-shadow(0 0 40px rgba(255,215,0,0.3)) drop-shadow(0 4px 15px rgba(0,0,0,0.3))',
@@ -118,7 +119,7 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
             textShadow: '0 4px 30px rgba(0,0,0,0.3), 0 0 40px rgba(255,215,0,0.3)',
           }}
         >
-          مندي أبو نورة
+          سياق للمندي والولائم
         </h1>
       </div>
 

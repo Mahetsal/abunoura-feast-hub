@@ -118,8 +118,8 @@ const testimonials: Testimonial[] = [
   },
   {
     id: 14,
-    textAr: 'أبو نورة دائماً في القمة، وهذا التطبيق هو الواجهة الأمثل لكرمكم.',
-    textEn: 'Abu Noura is always at the top, and this app is the perfect front for your hospitality.',
+    textAr: 'سياق دائماً في القمة، وهذا التطبيق هو الواجهة الأمثل لكرمكم.',
+    textEn: 'Siyaq is always at the top, and this app is the perfect front for your hospitality.',
     nameAr: 'محمد الحربي',
     nameEn: 'Mohammed Al-Harbi',
     rating: 5,

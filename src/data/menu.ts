@@ -1,4 +1,4 @@
-// Menu data for Mandi Abu Noura Restaurant
+// Menu data for Siyaq Mandi & Feasts Restaurant
 
 export interface MenuItem {
   id: string;
@@ -114,8 +114,8 @@ export const menuItems: MenuItem[] = [
     id: 'quarter-waleema',
     nameAr: 'ربع وليمة مندي',
     nameEn: 'Quarter Mandi Banquet',
-    descriptionAr: 'تشكيلة من اللحم المندي المطبوخ بكل حب على طريقة المبدع ابو نورة',
-    descriptionEn: 'Assortment of mandi meat cooked with love Abu Noura style',
+    descriptionAr: 'تشكيلة من اللحم المندي المطبوخ بكل حب على طريقة المبدع سياق',
+    descriptionEn: 'Assortment of mandi meat cooked with love Siyaq style',
     price: 399,
     category: 'walaem',
     calories: 12100,
@@ -334,8 +334,8 @@ export const menuItems: MenuItem[] = [
 
 // Restaurant info
 export const restaurantInfo = {
-  nameAr: 'مندي أبو نورة',
-  nameEn: 'Mandi Abu Noura',
+  nameAr: 'سياق للمندي والولائم',
+  nameEn: 'Siyaq Mandi & Feasts',
   phone: '0558454573',
   phoneFormatted: '055 845 4573',
   addressAr: 'حي، شارع الأمير مقرن بن عبدالعزيز، النزهة، الرياض 12471',
@@ -357,7 +357,7 @@ export const restaurantInfo = {
 // Translations
 export const translations = {
   ar: {
-    welcome: 'يا هلا ومسهلا بضيوف أبو نورة! 😍',
+    welcome: 'يا هلا ومسهلا بضيوف سياق! 😍',
     discountMessage: 'استمتع بالخصم الخاص بمناسبة إطلاق موقعنا: 15% خصم لأول طلب!',
     addToCart: 'أضف للسلة',
     cart: 'السلة',
@@ -421,7 +421,7 @@ export const translations = {
     language: 'English',
     home: 'الرئيسية',
     menu: 'القائمة',
-    askAssistant: 'اسأل مساعد أبو نورة الذكي ✨',
+    askAssistant: 'اسأل مساعد سياق الذكي ✨',
     assistantGreeting: 'أهلاً بك! لتقديم الخدمة الأفضل، كم عدد الأشخاص؟',
     selectNumber: 'اختر العدد',
     persons: 'أشخاص',
@@ -454,7 +454,7 @@ export const translations = {
     preparingOrder: 'طلبك قيد التحضير الآن',
   },
   en: {
-    welcome: 'Welcome to Abu Noura! 😍',
+    welcome: 'Welcome to Siyaq! 😍',
     discountMessage: 'Enjoy our special launch discount: 15% off your first order!',
     addToCart: 'Add to Cart',
     cart: 'Cart',
@@ -518,7 +518,7 @@ export const translations = {
     language: 'العربية',
     home: 'Home',
     menu: 'Menu',
-    askAssistant: 'Ask Abu Noura Smart Assistant ✨',
+    askAssistant: 'Ask Siyaq Smart Assistant ✨',
     assistantGreeting: 'Hello! How many people are you ordering for?',
     selectNumber: 'Select number',
     persons: 'persons',

@@ -12,6 +12,7 @@ interface Obstacle {
   id: number;
   lane: number; // 0, 1, 2
   y: number; // 0 to 100 (percentage from top)
+  prevY: number; // position in the previous frame (used for swept collision checks)
   type: 'sedan' | 'taxi' | 'police';
   emoji: string;
   isMoving: boolean;
@@ -165,11 +166,9 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
       if (lastTime === null) {
         lastTime = timestamp;
       }
-      const deltaTime = Math.max(0, Math.min(100, timestamp - lastTime));
+      // Clamp the step so a slow/background frame can never teleport traffic past the player
+      const deltaTime = Math.max(0, Math.min(32, timestamp - lastTime));
       lastTime = timestamp;
-
-      // Increment debug tick counter
-      setTicks(t => t + 1);
 
       // 1. Move obstacles
       const currentObstacles = obstaclesRef.current;
@@ -203,6 +202,7 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
 
           return {
             ...obs,
+            prevY: obs.y,
             y,
             lane,
             sideOffset,
@@ -244,6 +244,7 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
             id: obstacleIdRef.current,
             lane: spawnLane,
             y: -10,
+            prevY: -10,
             type,
             emoji,
             isMoving: false,
@@ -272,13 +273,16 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
         spawnTimerRef.current = 0;
       }
 
-      // 4. Check collisions with obstacles
+      // 4. Check collisions with obstacles (swept check so fast traffic can never pass through unseen)
       let crashHappened = false;
       updatedObstacles.forEach(obs => {
         if (obs.isBlasted) return;
-        const obsEffectiveLane = obs.isMoving && obs.sideOffset > 0.3 ? obs.lane + 1 : obs.lane;
+        const obsEffectiveLane = obs.isMoving && obs.sideOffset > 0.3
+          ? Math.min(2, obs.lane + 1)
+          : obs.lane;
         const isSameLane = obsEffectiveLane === playerLaneRef.current;
-        if (isSameLane && obs.y > 75 && obs.y < 90) {
+        const enteredZone = obs.y > PLAYER_ZONE_TOP && obs.prevY < PLAYER_ZONE_BOTTOM;
+        if (isSameLane && enteredZone) {
           if (isBoostingRef.current) {
             // Laban boost active: RAM the obstacle!
             obs.isBlasted = true;
@@ -302,20 +306,15 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
           setIsPlaying(false);
           playGameSound?.('fanfare');
         } else {
-          isInvincibleRef.current = true;
-          setIsInvincible(true);
+          startInvincibility(2000);
           playGameSound?.('flip');
-          setTimeout(() => {
-            isInvincibleRef.current = false;
-            setIsInvincible(false);
-          }, 2000);
         }
       }
 
       // 5. Check collisions with collectibles
       const remainingCollectibles: Collectible[] = [];
       updatedCollectibles.forEach(item => {
-        if (item.lane === playerLaneRef.current && item.y > 75 && item.y < 90) {
+        if (item.lane === playerLaneRef.current && item.y > PLAYER_ZONE_TOP && item.y < PLAYER_ZONE_BOTTOM) {
           let points = 100;
           let label = '+100 MANDI';
           let textColor = 'text-yellow-400';
@@ -329,18 +328,16 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
             points = 200;
             label = '🥛 NISMO BOOST!';
             textColor = 'text-cyan-300 font-black animate-pulse';
-            
+
             // Activate Nismo Warp Speed Boost & Invincibility for 3 seconds
             setIsBoosting(true);
             isBoostingRef.current = true;
-            setIsInvincible(true);
-            isInvincibleRef.current = true;
-            
-            setTimeout(() => {
+            startInvincibility(3000);
+
+            if (boostTimeoutRef.current) clearTimeout(boostTimeoutRef.current);
+            boostTimeoutRef.current = setTimeout(() => {
               setIsBoosting(false);
               isBoostingRef.current = false;
-              setIsInvincible(false);
-              isInvincibleRef.current = false;
             }, 3000);
             
             playGameSound?.('match');

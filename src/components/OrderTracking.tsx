@@ -167,8 +167,8 @@ export function OrderTracking({ isOpen, onClose, onNewOrder }: OrderTrackingProp
 
   const handleShare = () => {
     const text = language === 'ar' 
-      ? `تتبع طلبي من مندي أبو نورة! رقم الطلب: ${currentOrderId}`
-      : `Track my order from Mandi Abu Noura! Order #${currentOrderId}`;
+      ? `تتبع طلبي من سياق للمندي والولائم! رقم الطلب: ${currentOrderId}`
+      : `Track my order from Siyaq Mandi & Feasts! Order #${currentOrderId}`;
     
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
     window.open(whatsappUrl, '_blank');
@@ -183,14 +183,14 @@ export function OrderTracking({ isOpen, onClose, onNewOrder }: OrderTrackingProp
     const notes = orderInfo.orderNotes ? `\n📝 ${language === 'ar' ? 'ملاحظات' : 'Notes'}: ${orderInfo.orderNotes}` : '';
 
     const text = language === 'ar'
-      ? `🍚 *طلب جديد من مندي أبو نورة*\n\n` +
+      ? `🍚 *طلب جديد من سياق للمندي والولائم*\n\n` +
         `👤 الاسم: ${orderInfo.name}\n` +
         `📞 الجوال: ${orderInfo.phone}\n` +
         `📍 العنوان: ${orderInfo.address || 'استلام من الفرع'}\n\n` +
         `*الأصناف:*\n${itemsList}\n\n` +
         `💰 الإجمالي: ${grandTotal.toFixed(2)} ر.س` +
         notes
-      : `🍚 *New Order — Mandi Abu Noura*\n\n` +
+      : `🍚 *New Order — Siyaq Mandi & Feasts*\n\n` +
         `👤 Name: ${orderInfo.name}\n` +
         `📞 Phone: ${orderInfo.phone}\n` +
         `📍 Address: ${orderInfo.address || 'Branch pickup'}\n\n` +

@@ -137,7 +137,7 @@ export function GameHub({ isActive, onScoreChange }: GameHubProps) {
         <div className="flex items-center justify-center gap-2 mb-2">
           <Gamepad2 className="w-6 h-6 text-primary" />
           <h3 className="text-xl font-bold text-foreground">
-            {language === 'ar' ? 'ألعاب أبو نورة' : 'Abu Noura Games'}
+            {language === 'ar' ? 'ألعاب سياق' : 'Siyaq Games'}
           </h3>
           <button
             onClick={toggleMute}

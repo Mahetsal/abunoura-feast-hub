@@ -15,7 +15,7 @@ export function GamesShowcase() {
         <div className="flex items-center justify-center gap-3 mb-8">
           <Gamepad2 className="w-7 h-7 text-primary" />
           <h2 className="text-2xl md:text-3xl font-bold text-foreground font-cairo">
-            {language === 'ar' ? 'ألعاب أبو نورة التفاعلية' : 'Abu Noura Interactive Games'}
+            {language === 'ar' ? 'ألعاب سياق التفاعلية' : 'Siyaq Interactive Games'}
           </h2>
           <span className="text-2xl">🎮</span>
         </div>
