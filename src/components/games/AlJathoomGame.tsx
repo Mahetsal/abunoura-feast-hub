@@ -21,6 +21,10 @@ interface Obstacle {
   blastAngle?: number;
 }
 
+// Vertical band (in % of road height) where the player's car sits
+const PLAYER_ZONE_TOP = 72;
+const PLAYER_ZONE_BOTTOM = 92;
+
 interface Collectible {
   id: number;
   lane: number;
