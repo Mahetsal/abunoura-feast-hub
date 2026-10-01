@@ -166,11 +166,9 @@ export function AlJathoomGame({ isActive, onScoreChange, playGameSound }: AlJath
       if (lastTime === null) {
         lastTime = timestamp;
       }
-      const deltaTime = Math.max(0, Math.min(100, timestamp - lastTime));
+      // Clamp the step so a slow/background frame can never teleport traffic past the player
+      const deltaTime = Math.max(0, Math.min(32, timestamp - lastTime));
       lastTime = timestamp;
-
-      // Increment debug tick counter
-      setTicks(t => t + 1);
 
       // 1. Move obstacles
       const currentObstacles = obstaclesRef.current;
